@@ -1,0 +1,51 @@
+package com.cognizant.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.support.MessageBuilder;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.stereotype.Service;
+
+import com.cognizant.entity.Profile;
+import com.cognizant.exception.ProfileAlreadyExistException;
+import com.cognizant.exception.ProfileNotFoundException;
+import com.cognizant.repo.ProfileRepository;
+
+@Service
+public class ProfileService {
+
+	@Autowired
+	ProfileRepository repo;
+
+	@Autowired
+	MessageChannel output;
+
+	public List<Profile> getAllProfiles() {
+		return repo.findAll();
+	}
+
+	public Profile insertProfiles(Profile profile) throws ProfileAlreadyExistException {
+		output.send(MessageBuilder.withPayload(profile.getProfiletype()+" Profile Inserted").build());
+		return repo.save(profile);
+	}
+
+	public Profile updateProfiles(Profile profile) throws ProfileNotFoundException {
+		if (repo.findById(profile.getProfiletype()).isPresent()) {
+			output.send(MessageBuilder.withPayload(profile.getProfiletype()+" Profile Updated").build());
+			return repo.save(profile);
+		} else {
+			throw new ProfileNotFoundException(profile.getProfiletype()+" Profile Not Found!");
+		}
+	}
+
+	public void deleteProfiles(String type) throws ProfileNotFoundException {
+		if (repo.findById(type).isPresent()) {
+			repo.deleteById(type);
+			output.send(MessageBuilder.withPayload(type+" Profile Deleted").build());
+		} else {
+			throw new ProfileNotFoundException(type+" Profile Not Found!");
+		}
+	}
+
+}
