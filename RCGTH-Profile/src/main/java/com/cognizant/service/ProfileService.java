@@ -39,10 +39,12 @@ public class ProfileService {
 		}
 	}
 
-	public void deleteProfiles(String type) throws ProfileNotFoundException {
+	public String deleteProfiles(String type) throws ProfileNotFoundException {
 		if (repo.findById(type).isPresent()) {
 			repo.deleteById(type);
-			output.send(MessageBuilder.withPayload(type+" Profile Deleted").build());
+			String msg=type+" Profile Deleted";
+			output.send(MessageBuilder.withPayload(msg).build());
+			return msg;
 		} else {
 			throw new ProfileNotFoundException(type+" Profile Not Found!");
 		}

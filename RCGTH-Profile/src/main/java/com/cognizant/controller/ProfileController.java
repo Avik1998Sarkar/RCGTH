@@ -42,8 +42,8 @@ public class ProfileController {
 	}
 
 	@DeleteMapping("/{str}")
-	public void deleteProfiles(@PathVariable String str) throws ProfileNotFoundException {
-		cache.deleteProfiles(str);
+	public String deleteProfiles(@PathVariable String str) throws ProfileNotFoundException {
+		return cache.deleteProfiles(str);
 	}
 
 }

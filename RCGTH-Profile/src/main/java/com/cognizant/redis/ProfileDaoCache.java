@@ -45,9 +45,9 @@ public class ProfileDaoCache {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void deleteProfiles(String type) throws ProfileNotFoundException {
+	public String deleteProfiles(String type) throws ProfileNotFoundException {
 		template.opsForHash().delete(HASH_KEY, type);
-		service.deleteProfiles(type);
+		return service.deleteProfiles(type);
 	}
 
 	@SuppressWarnings("unchecked")
