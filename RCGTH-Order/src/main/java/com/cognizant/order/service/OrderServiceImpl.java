@@ -46,9 +46,10 @@ public class OrderServiceImpl implements OrderService {
 		Optional<Orders> orders = orderRepository.findById(order.getOrderId());
 		Orders updateOrders = new Orders();
 		if (orders.isPresent()) {
-			Orders updateOrder = client.matchProfile(orders.get());
-			updateOrder.setOrderName(order.getOrderName());
-			updateOrder.setProducts(order.getProducts());
+			Orders input=client.matchProfile(order);
+			Orders updateOrder = orders.get();
+			updateOrder.setOrderName(input.getOrderName());
+			updateOrder.setProducts(input.getProducts());
 			updateOrders = orderRepository.save(updateOrder);
 
 		} else {

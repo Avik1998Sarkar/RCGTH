@@ -57,8 +57,9 @@ public class OrderDaoCache {
 		if (template.opsForHash().get(HASH_KEY, orders.getOrderId()) == null) {
 			throw new OrderNotFoundException("Order Not Found!");
 		} else {
-			template.opsForHash().put(HASH_KEY, orders.getOrderId(), orders);
-			return service.updateOrders(orders);
+			Orders updatedOrder=service.updateOrders(orders);
+			template.opsForHash().put(HASH_KEY, orders.getOrderId(), updatedOrder);
+			return updatedOrder;
 		}
 	}
 
