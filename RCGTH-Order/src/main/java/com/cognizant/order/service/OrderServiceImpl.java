@@ -1,5 +1,6 @@
 package com.cognizant.order.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,9 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.cognizant.order.clients.IndentifyProfileClient;
 import com.cognizant.order.entity.Orders;
+import com.cognizant.order.entity.Product;
 import com.cognizant.order.exception.OrderAlreadyExistsException;
 import com.cognizant.order.exception.OrderNotFoundException;
 import com.cognizant.order.exception.ProductTypeNotFoundException;
+import com.cognizant.order.model.ProductPojo;
 import com.cognizant.order.repository.OrderRepository;
 
 @Service
@@ -31,6 +34,10 @@ public class OrderServiceImpl implements OrderService {
 		if (orderRepository.findById(orders.getOrderId()).isPresent()) {
 			throw new OrderAlreadyExistsException("Order already exists!!");
 		}
+		
+		List<Product> productList=order.getProducts();
+		int sum=productList.stream().mapToInt(Product::getProductPrice).sum();
+		order.setTotal(sum);
 		return orderRepository.save(order);
 	}
 
@@ -42,11 +49,14 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Orders updateOrders(Orders order) throws OrderNotFoundException {
+	public Orders updateOrders(Orders order) throws OrderNotFoundException, ProductTypeNotFoundException {
 		Optional<Orders> orders = orderRepository.findById(order.getOrderId());
 		Orders updateOrders = new Orders();
 		if (orders.isPresent()) {
 			Orders input=client.matchProfile(order);
+			if(input.getProducts().get(0).getExpiry()==null) {
+				throw new ProductTypeNotFoundException("Product Type Not Found!");
+			}
 			Orders updateOrder = orders.get();
 			updateOrder.setOrderName(input.getOrderName());
 			updateOrder.setProducts(input.getProducts());

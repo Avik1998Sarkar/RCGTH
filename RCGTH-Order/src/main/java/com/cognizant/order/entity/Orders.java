@@ -26,5 +26,7 @@ public class Orders implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "orderId")
 	private List<Product> products;
+	private int total;
+	
 
 }

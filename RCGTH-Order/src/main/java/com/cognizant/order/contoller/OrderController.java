@@ -44,6 +44,7 @@ public class OrderController {
 				productPojo.setProductId(prod.getProductId());
 				productPojo.setProductName(prod.getProductName());
 				productPojo.setProductType(prod.getProductType());
+				productPojo.setProductPrice(prod.getProductPrice());
 				productPojo.setReturnpolicy(prod.getReturnpolicy());
 				productPojo.setFragility(prod.getFragility());
 				productPojo.setWarranty(prod.getWarranty());
@@ -51,6 +52,8 @@ public class OrderController {
 				productPojoList.add(productPojo);
 			}
 			orderpojo.setProducts(productPojoList);
+			int sum=productPojoList.stream().mapToInt(ProductPojo::getProductPrice).sum();
+			orderpojo.setTotalPrice(sum);
 			listOrderPojo.add(orderpojo);
 		}
 		return listOrderPojo;
@@ -62,7 +65,7 @@ public class OrderController {
 	}
 
 	@PutMapping
-	public Orders updateOrders(@RequestBody Orders order) throws OrderNotFoundException {
+	public Orders updateOrders(@RequestBody Orders order) throws OrderNotFoundException, ProductTypeNotFoundException {
 		return cache.updateOrders(order);
 	}
 

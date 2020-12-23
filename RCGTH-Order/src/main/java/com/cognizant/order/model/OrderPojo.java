@@ -8,5 +8,6 @@ public class OrderPojo {
 	private int orderId;
 	private String orderName;
 	private List<ProductPojo> products;
+	private int totalPrice;
 
 }

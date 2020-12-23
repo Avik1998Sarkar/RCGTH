@@ -13,7 +13,7 @@ public interface OrderService {
 
 	public List<Orders> getAllOrders();
 
-	public Orders updateOrders(Orders order) throws OrderNotFoundException;
+	public Orders updateOrders(Orders order) throws OrderNotFoundException, ProductTypeNotFoundException;
 
 	public String deleteOrders(int orderId) throws OrderNotFoundException;
 

@@ -47,18 +47,18 @@ public class OrderDaoCache {
 
 	@SuppressWarnings("unchecked")
 	public String deleteOrders(int orderId) throws OrderNotFoundException {
-		template.opsForHash().delete(HASH_KEY, orderId);
 		service.deleteOrders(orderId);
+		template.opsForHash().delete(HASH_KEY, orderId);
 		return "Order deleted with id: " + orderId;
 	}
 
 	@SuppressWarnings("unchecked")
-	public Orders updateOrders(Orders orders) throws OrderNotFoundException {
+	public Orders updateOrders(Orders orders) throws OrderNotFoundException, ProductTypeNotFoundException {
 		if (template.opsForHash().get(HASH_KEY, orders.getOrderId()) == null) {
 			throw new OrderNotFoundException("Order Not Found!");
 		} else {
 			Orders updatedOrder=service.updateOrders(orders);
-			template.opsForHash().put(HASH_KEY, orders.getOrderId(), updatedOrder);
+			template.opsForHash().put(HASH_KEY, updatedOrder.getOrderId(), updatedOrder);
 			return updatedOrder;
 		}
 	}
