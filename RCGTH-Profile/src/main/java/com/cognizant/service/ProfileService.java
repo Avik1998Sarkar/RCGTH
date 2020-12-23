@@ -18,7 +18,7 @@ public class ProfileService {
 	@Autowired
 	ProfileRepository repo;
 
-	@Autowired
+  	@Autowired
 	MessageChannel output;
 
 	public List<Profile> getAllProfiles() {

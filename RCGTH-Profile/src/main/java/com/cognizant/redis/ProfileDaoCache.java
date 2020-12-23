@@ -29,7 +29,7 @@ public class ProfileDaoCache {
 			throw new ProfileAlreadyExistException("Already Exist!");
 		} else {
 			Profile insertProfiles = service.insertProfiles(profile);
-			template.opsForHash().put(HASH_KEY, profile.getProfiletype(), profile);
+			template.opsForHash().put(HASH_KEY, insertProfiles.getProfiletype(), insertProfiles);
 			return insertProfiles;
 		}
 	}
@@ -46,8 +46,11 @@ public class ProfileDaoCache {
 
 	@SuppressWarnings("unchecked")
 	public String deleteProfiles(String type) throws ProfileNotFoundException {
+		String res=service.deleteProfiles(type);
+		if(res.equals(type+" Profile Deleted")){
 		template.opsForHash().delete(HASH_KEY, type);
-		return service.deleteProfiles(type);
+		}
+		return res;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -55,8 +58,9 @@ public class ProfileDaoCache {
 		if (template.opsForHash().get(HASH_KEY, profile.getProfiletype()) == null) {
 			throw new ProfileNotFoundException("Not Found!");
 		} else {
-			template.opsForHash().put(HASH_KEY, profile.getProfiletype(), profile);
-			return service.updateProfiles(profile);
+			Profile updatedProfile=service.updateProfiles(profile);
+			template.opsForHash().put(HASH_KEY, updatedProfile.getProfiletype(), updatedProfile);
+			return updatedProfile;
 		}
 	}
 
