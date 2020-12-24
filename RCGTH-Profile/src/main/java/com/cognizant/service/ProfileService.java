@@ -24,6 +24,14 @@ public class ProfileService {
 	public List<Profile> getAllProfiles() {
 		return repo.findAll();
 	}
+	
+	public Profile getOneProfiles(String str) throws ProfileNotFoundException {
+		if(repo.findById(str).isPresent()) {
+			return repo.findById(str).get();
+		}else {
+			throw new ProfileNotFoundException(str+" Profile Not Found!");
+		}
+	}
 
 	public Profile insertProfiles(Profile profile) throws ProfileAlreadyExistException {
 		output.send(MessageBuilder.withPayload(profile.getProfiletype()+" Profile Inserted").build());

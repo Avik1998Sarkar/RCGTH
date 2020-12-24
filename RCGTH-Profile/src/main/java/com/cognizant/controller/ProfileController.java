@@ -18,6 +18,7 @@ import com.cognizant.entity.Profile;
 import com.cognizant.exception.ProfileAlreadyExistException;
 import com.cognizant.exception.ProfileNotFoundException;
 import com.cognizant.redis.ProfileDaoCache;
+import com.cognizant.service.ProfileService;
 
 @RestController
 @RequestMapping("/profile")
@@ -25,10 +26,18 @@ public class ProfileController {
 
 	@Autowired
 	private transient ProfileDaoCache cache;
+	
+	@Autowired
+	private ProfileService service;
 
 	@GetMapping("/")
 	public List<Profile> getAllProfiles() {
 		return cache.getAllProfiles();
+	}
+	
+	@GetMapping("/{str}")
+	public Profile getOneProfiles(@PathVariable String str) throws ProfileNotFoundException {
+		return service.getOneProfiles(str);
 	}
 
 	@PostMapping("/")

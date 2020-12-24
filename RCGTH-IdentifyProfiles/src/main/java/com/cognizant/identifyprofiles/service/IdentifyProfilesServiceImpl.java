@@ -21,18 +21,25 @@ public class IdentifyProfilesServiceImpl implements IdentifyProfilesService {
 	public Orders matchProfile(Orders orders) throws ProductTypeNotFoundException {
 		List<Product> productList = orders.getProducts();
 		List<Profile> profileList = profileClient.getAllProfiles();
+		boolean flag;
 		for (Product p : productList) {
 			String productType = p.getProductType();
+			flag = false;
 			for (Profile p2 : profileList) {
 				if (p2.getProfiletype().equalsIgnoreCase(productType)) {
 					p.setReturnpolicy(p2.getReturnpolicy());
 					p.setWarranty(p2.getWarranty());
 					p.setExpiry(p2.getExpiry());
 					p.setFragility(p2.getFragility());
+					flag = true;
 					break;
 				}
 			}
+			if (flag == false) {
+				throw new ProductTypeNotFoundException("Product Type Not Found!");
+			}
 		}
+
 		orders.setProducts(productList);
 		return orders;
 	}

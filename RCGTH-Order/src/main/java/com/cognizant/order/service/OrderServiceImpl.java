@@ -1,6 +1,5 @@
 package com.cognizant.order.service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,7 +12,6 @@ import com.cognizant.order.entity.Product;
 import com.cognizant.order.exception.OrderAlreadyExistsException;
 import com.cognizant.order.exception.OrderNotFoundException;
 import com.cognizant.order.exception.ProductTypeNotFoundException;
-import com.cognizant.order.model.ProductPojo;
 import com.cognizant.order.repository.OrderRepository;
 
 @Service
@@ -27,18 +25,20 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public Orders saveOrders(Orders orders) throws OrderAlreadyExistsException, ProductTypeNotFoundException {
-		Orders order = client.matchProfile(orders);
-		if(order.getProducts().get(0).getExpiry()==null) {
+		try {
+			Orders order = client.matchProfile(orders);
+
+			if (orderRepository.findById(orders.getOrderId()).isPresent()) {
+				throw new OrderAlreadyExistsException("Order already exists!!");
+			}
+
+			List<Product> productList = order.getProducts();
+			int sum = productList.stream().mapToInt(Product::getProductPrice).sum();
+			order.setTotal(sum);
+			return orderRepository.save(order);
+		} catch (Exception e) {
 			throw new ProductTypeNotFoundException("Product Type Not Found!");
 		}
-		if (orderRepository.findById(orders.getOrderId()).isPresent()) {
-			throw new OrderAlreadyExistsException("Order already exists!!");
-		}
-		
-		List<Product> productList=order.getProducts();
-		int sum=productList.stream().mapToInt(Product::getProductPrice).sum();
-		order.setTotal(sum);
-		return orderRepository.save(order);
 	}
 
 	@Override
@@ -52,33 +52,30 @@ public class OrderServiceImpl implements OrderService {
 	public Orders updateOrders(Orders order) throws OrderNotFoundException, ProductTypeNotFoundException {
 		Optional<Orders> orders = orderRepository.findById(order.getOrderId());
 		Orders updateOrders = new Orders();
-		if (orders.isPresent()) {
-			Orders input=client.matchProfile(order);
-			if(input.getProducts().get(0).getExpiry()==null) {
-				throw new ProductTypeNotFoundException("Product Type Not Found!");
+		try {
+			if (orders.isPresent()) {
+				Orders input = client.matchProfile(order);
+				Orders updateOrder = orders.get();
+				updateOrder.setOrderName(input.getOrderName());
+				updateOrder.setProducts(input.getProducts());
+				updateOrders = orderRepository.save(updateOrder);
+			} else {
+				throw new OrderNotFoundException("Order not found with id:" + order.getOrderId());
 			}
-			Orders updateOrder = orders.get();
-			updateOrder.setOrderName(input.getOrderName());
-			updateOrder.setProducts(input.getProducts());
-			updateOrders = orderRepository.save(updateOrder);
-
-		} else {
-			throw new OrderNotFoundException("Order not found with id:" + order.getOrderId());
+			return updateOrders;
+		} catch (Exception e) {
+			throw new ProductTypeNotFoundException("Product Type Not Found!");
 		}
-		return updateOrders;
 	}
 
 	@Override
 	public String deleteOrders(int orderId) throws OrderNotFoundException {
-
 		Optional<Orders> order = orderRepository.findById(orderId);
 		if (order.isPresent()) {
-
 			orderRepository.deleteById(orderId);
 		} else {
 			throw new OrderNotFoundException("Order not found with id:" + orderId);
 		}
-
 		return "Order deleted with id: " + orderId;
 	}
 
