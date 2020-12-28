@@ -8,6 +8,7 @@ class RcgthMessageBrokerApplicationTests {
 
 	@Test
 	void contextLoads() {
+		RcgthMessageBrokerApplication.main(new String[] {});
 	}
 
 }

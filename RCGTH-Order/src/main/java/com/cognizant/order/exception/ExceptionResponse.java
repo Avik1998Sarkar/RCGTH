@@ -3,9 +3,11 @@ package com.cognizant.order.exception;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-@Data
+import lombok.Setter;
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExceptionResponse {

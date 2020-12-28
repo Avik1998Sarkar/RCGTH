@@ -8,6 +8,7 @@ class RcgthOrderApplicationTests {
 
 	@Test
 	void contextLoads() {
+		RcgthOrderApplication.main(new String[] {});
 	}
 
 }

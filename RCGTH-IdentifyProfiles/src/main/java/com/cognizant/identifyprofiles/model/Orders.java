@@ -6,12 +6,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
-@Data
+
 @NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
 @ToString
 public class Orders {
@@ -21,5 +24,6 @@ public class Orders {
 	private List<Product> products;
 	private String orderName;
 	private int total;
+	
 
 }

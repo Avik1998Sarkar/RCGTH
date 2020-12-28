@@ -8,6 +8,7 @@ class RcgthProfileApplicationTests {
 
 	@Test
 	void contextLoads() {
+		RcgthProfileApplication.main(new String[] {});
 	}
 
 }

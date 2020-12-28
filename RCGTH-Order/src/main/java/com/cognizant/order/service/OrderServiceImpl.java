@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cognizant.order.clients.IndentifyProfileClient;
+import com.cognizant.order.clients.IdentifyProfileClient;
 import com.cognizant.order.entity.Orders;
 import com.cognizant.order.entity.Product;
 import com.cognizant.order.exception.OrderAlreadyExistsException;
@@ -21,7 +21,7 @@ public class OrderServiceImpl implements OrderService {
 	private OrderRepository orderRepository;
 
 	@Autowired
-	private IndentifyProfileClient client;
+	private IdentifyProfileClient client;
 
 	@Override
 	public Orders saveOrders(Orders orders) throws OrderAlreadyExistsException, ProductTypeNotFoundException {
