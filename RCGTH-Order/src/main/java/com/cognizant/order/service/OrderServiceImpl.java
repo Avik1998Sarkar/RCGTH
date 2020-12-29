@@ -25,8 +25,12 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public Orders saveOrders(Orders orders) throws OrderAlreadyExistsException, ProductTypeNotFoundException {
+		Orders order=null;
 		try {
-			Orders order = client.matchProfile(orders);
+			order = client.matchProfile(orders);
+		} catch (Exception e) {
+			throw new ProductTypeNotFoundException("Product Type Not Found!");
+		}
 
 			if (orderRepository.findById(orders.getOrderId()).isPresent()) {
 				throw new OrderAlreadyExistsException("Order already exists!!");
@@ -36,9 +40,7 @@ public class OrderServiceImpl implements OrderService {
 			int sum = productList.stream().mapToInt(Product::getProductPrice).sum();
 			order.setTotal(sum);
 			return orderRepository.save(order);
-		} catch (Exception e) {
-			throw new ProductTypeNotFoundException("Product Type Not Found!");
-		}
+		
 	}
 
 	@Override
@@ -58,6 +60,9 @@ public class OrderServiceImpl implements OrderService {
 				Orders updateOrder = orders.get();
 				updateOrder.setOrderName(input.getOrderName());
 				updateOrder.setProducts(input.getProducts());
+				List<Product> productList = updateOrder.getProducts();
+				int sum = productList.stream().mapToInt(Product::getProductPrice).sum();
+				updateOrder.setTotal(sum);
 				updateOrders = orderRepository.save(updateOrder);
 			} else {
 				throw new OrderNotFoundException("Order not found with id:" + order.getOrderId());

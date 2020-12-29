@@ -23,6 +23,9 @@ import com.cognizant.order.exception.OrderNotFoundException;
 import com.cognizant.order.exception.ProductTypeNotFoundException;
 import com.cognizant.order.repository.OrderRepository;
 
+import feign.Feign;
+import feign.FeignException.FeignClientException;
+
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 class OrderServiceTest {
@@ -52,26 +55,29 @@ class OrderServiceTest {
 		Mockito.when(orderRepository.save(order1)).thenReturn(order1);
 		assertEquals(order1,orderService.saveOrders(order1));		
 	}
-//	@Test
-//	void testSaveOrdersOrderAlreadyExists() throws OrderAlreadyExistsException  {		
-//		Orders order=new Orders(1,"XYZ",productList1 , 1);orderRepository.save(order);
-//		Mockito.when(identifyProfileClient.matchProfile(order)).thenReturn(order);
-//		Mockito.when(orderRepository.findById(order.getOrderId())).thenReturn(Optional.of(order));
-//		Mockito.when(orderRepository.save(order)).thenReturn(order);
-//		assertThrows(OrderAlreadyExistsException.class, () -> orderService.saveOrders(order));		
-//	}
+	@Test
+	void testSaveOrdersOrderAlreadyExists() throws OrderAlreadyExistsException, ProductTypeNotFoundException  {		
+		Orders order=new Orders(1,"XYZ",productList1 , 1);orderRepository.save(order);
+		Mockito.when(identifyProfileClient.matchProfile(order)).thenReturn(order);
+		Mockito.when(orderRepository.findById(order.getOrderId())).thenReturn(Optional.of(order));
+		Mockito.when(orderRepository.save(order)).thenReturn(order);
+		assertThrows(OrderAlreadyExistsException.class, () -> orderService.saveOrders(order));		
+	}
 	@Test
 	void testSaveOrdersProductTypeNotFound() throws OrderAlreadyExistsException, ProductTypeNotFoundException  {		
-		Orders order=new Orders(1,"XYZ",productList1 , 1);Orders order2=new Orders(1,"XYZ",productList2 , 1);
-		Mockito.when(identifyProfileClient.matchProfile(order2)).thenReturn(order);
+		Orders order=new Orders(1,"XYZ",productList1 , 1);
+		//Orders order2=new Orders(1,"XYZ",productList2 , 1);
+		Mockito.when(identifyProfileClient.matchProfile(order)).thenThrow(ProductTypeNotFoundException.class);
 		assertThrows(ProductTypeNotFoundException.class, () -> orderService.saveOrders(order));	
 	}
 	
 	@Test
 	void testGetAllOrders() {		
 		Orders order=new Orders(1,"XYZ",productList1 , 1);
-		Mockito.when(orderRepository.findAll()).thenReturn(List.of(order));
-		assertEquals(List.of(order),orderService.getAllOrders());		
+		List<Orders> orders=new ArrayList<>();
+		orders.add(order);
+		Mockito.when(orderRepository.findAll()).thenReturn(orders);
+		assertEquals(orders,orderService.getAllOrders());		
 	}
 	
 	

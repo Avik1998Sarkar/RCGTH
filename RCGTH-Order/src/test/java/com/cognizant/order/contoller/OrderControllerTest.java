@@ -32,7 +32,9 @@ class OrderControllerTest {
 	@Test
 	final void testGetAllOrders()  {
 		Product product=new Product(1, "phone", "Electronics", 10000, "Y", "Y", "N", "Y");
-		Orders order=new Orders(1, "XYZ", List.of(product), 10000);
+		List<Product> productList=new ArrayList<Product>();
+		productList.add(product);
+		Orders order=new Orders(1, "XYZ",  productList, 10000);
 		List<Orders> orderList=new ArrayList<>();orderList.add(order);
 		when(cache.getAllOrders()).thenReturn(orderList);
 		List<OrderPojo> expected = orderController.getAllOrders();
@@ -42,7 +44,9 @@ class OrderControllerTest {
 	@Test
 	final void testInsertOrder() throws OrderAlreadyExistsException, ProductTypeNotFoundException  {
 		Product product=new Product(1, "phone", "Electronics", 10000, "Y", "Y", "N", "Y");
-		Orders order=new Orders(1, "XYZ", List.of(product), 10000);
+		List<Product> productList=new ArrayList<Product>();
+		 productList.add(product);
+		Orders order=new Orders(1, "XYZ", productList, 10000);
 		when(cache.saveOrders(order)).thenReturn(order);
 		Orders expected = orderController.insertOrder(order);
 		assertEquals(expected,order);
@@ -51,7 +55,9 @@ class OrderControllerTest {
 	@Test
 	final void testUpdateOrders() throws OrderNotFoundException, ProductTypeNotFoundException  {
 		Product product=new Product(1, "phone", "Electronics", 10000, "Y", "Y", "N", "Y");
-		Orders order=new Orders(1, "XYZ", List.of(product), 10000);
+		List<Product> productList=new ArrayList<Product>();
+		 productList.add(product);
+		Orders order=new Orders(1, "XYZ", productList, 10000);
 		when(cache.updateOrders(order)).thenReturn(order);
 		Orders expected = orderController.updateOrders(order);
 		assertEquals(expected,order);
